@@ -1,9 +1,11 @@
 using UnityEngine;
 
 /// <summary>
-/// The level's exit. Stays shut until the CO_ObjectiveTracker_Script reports every power
-/// source collected, then slides open when the player walks up to it. Listens to
-/// the tracker rather than counting anything itself.
+/// The level's exit. Unlocked only while the CO_ObjectiveTracker_Script reports every power
+/// source collected <b>and</b> the player's work stack is empty (GDD §5.6: no work leaves
+/// the building), then slides open when the player walks up to it. A catch at the
+/// door locks it again. Listens to the tracker and the stack rather than counting
+/// anything itself.
 /// </summary>
 public class CO_MainDoor_Script : MonoBehaviour
 {
@@ -34,6 +36,7 @@ public class CO_MainDoor_Script : MonoBehaviour
 
     private CO_ObjectiveTracker_Script tracker;
     private Transform player;
+    private CO_WorkStack_Script stack;
     private Vector3 closedPosition;
     private Vector3 openPosition;
     private MaterialPropertyBlock propertyBlock;
@@ -42,8 +45,14 @@ public class CO_MainDoor_Script : MonoBehaviour
     // CO_EnemyStateIndicator_Script.
     private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
 
-    /// <summary>True once the objective is complete and the door will open.</summary>
+    /// <summary>True once every item is collected. Stays true; the stack decides the rest.</summary>
+    public bool HasAllItems { get; private set; }
+
+    /// <summary>True while the door will open: every item collected and no work carried.</summary>
     public bool IsUnlocked { get; private set; }
+
+    /// <summary>True while the items are in but the player still carries folders.</summary>
+    public bool IsBlockedByWork => HasAllItems && !IsUnlocked;
 
     private void Awake()
     {
@@ -66,6 +75,7 @@ public class CO_MainDoor_Script : MonoBehaviour
         if (playerObject != null)
         {
             player = playerObject.transform;
+            stack = playerObject.GetComponent<CO_WorkStack_Script>();
         }
         else
         {
@@ -80,6 +90,11 @@ public class CO_MainDoor_Script : MonoBehaviour
         // appears, rather than silently never subscribing and never unlocking.
         TryBind();
 
+        if (stack != null)
+        {
+            stack.FoldersChanged += OnFoldersChanged;
+        }
+
         Tint(IsUnlocked ? unlockedColour : lockedColour);
     }
 
@@ -87,8 +102,13 @@ public class CO_MainDoor_Script : MonoBehaviour
     {
         if (tracker != null)
         {
-            tracker.ObjectiveCompleted -= Unlock;
+            tracker.ObjectiveCompleted -= OnItemsCollected;
             tracker = null;
+        }
+
+        if (stack != null)
+        {
+            stack.FoldersChanged -= OnFoldersChanged;
         }
     }
 
@@ -105,20 +125,20 @@ public class CO_MainDoor_Script : MonoBehaviour
         }
 
         tracker = found;
-        tracker.ObjectiveCompleted += Unlock;
+        tracker.ObjectiveCompleted += OnItemsCollected;
 
         // The objective may already have completed before this door bound to the
         // tracker, in which case the event has been and gone.
         if (tracker.IsComplete)
         {
-            Unlock();
+            OnItemsCollected();
         }
     }
 
     private void Update()
     {
-        // Cheap null check in the common case: once bound, the door runs purely
-        // off the completion event.
+        // Cheap null check in the common case: once bound, the lock runs purely
+        // off the tracker and stack events.
         if (tracker == null)
         {
             TryBind();
@@ -155,20 +175,38 @@ public class CO_MainDoor_Script : MonoBehaviour
     }
 
     /// <summary>
-    /// Marks the door as openable. Idempotent, because it is reachable both from
+    /// Records that every item is in. Idempotent, because it is reachable both from
     /// the completion event and from the catch-up check in OnEnable.
     /// </summary>
-    private void Unlock()
+    private void OnItemsCollected()
     {
-        if (IsUnlocked)
+        HasAllItems = true;
+        RefreshLock();
+    }
+
+    private void OnFoldersChanged(int previous, int current)
+    {
+        RefreshLock();
+    }
+
+    /// <summary>
+    /// Re-checks the unlock rule. Runs on every item and stack change rather than
+    /// latching, so a catch at the door shuts it again until the work is gone.
+    /// </summary>
+    private void RefreshLock()
+    {
+        bool unlocked = HasAllItems && (stack == null || stack.Count == 0);
+        if (unlocked == IsUnlocked)
         {
             return;
         }
 
-        IsUnlocked = true;
-        Debug.Log($"{name}: unlocked.", this);
+        IsUnlocked = unlocked;
+        Debug.Log(unlocked
+            ? $"{name}: unlocked."
+            : $"{name}: locked - the player is carrying work.", this);
 
-        Tint(unlockedColour);
+        Tint(unlocked ? unlockedColour : lockedColour);
     }
 
     private void Tint(Color colour)

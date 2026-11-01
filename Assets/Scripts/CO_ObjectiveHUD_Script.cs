@@ -3,7 +3,8 @@ using UnityEngine;
 
 /// <summary>
 /// Shows objective progress on screen. Read-only: it observes CO_ObjectiveTracker_Script
-/// and never influences it, in the same way CO_EnemyStateIndicator_Script observes CO_EnemyAI_Script.
+/// and the player's CO_WorkStack_Script and never influences them, in the same way
+/// CO_EnemyStateIndicator_Script observes CO_EnemyAI_Script.
 /// </summary>
 public class CO_ObjectiveHUD_Script : MonoBehaviour
 {
@@ -19,11 +20,19 @@ public class CO_ObjectiveHUD_Script : MonoBehaviour
     [Tooltip("Shown once every power source has been collected.")]
     [SerializeField] private string completeText = "MAIN DOOR UNLOCKED";
 
+    [Tooltip("Shown once every power source is in but the player still carries work (GDD §5.6).")]
+    [SerializeField] private string blockedText = "CLEAR YOUR WORK FIRST";
+
+    [Tooltip("Tag identifying the player, whose work stack keeps the door shut.")]
+    [SerializeField] private string playerTag = "Player";
+
     [Header("Colour")]
     [SerializeField] private Color progressColour = new Color(0.95f, 0.8f, 0.2f);
     [SerializeField] private Color completeColour = new Color(0.3f, 0.9f, 1f);
+    [SerializeField] private Color blockedColour = new Color(1f, 0.35f, 0.3f);
 
     private CO_ObjectiveTracker_Script tracker;
+    private CO_WorkStack_Script stack;
 
     private void Awake()
     {
@@ -36,6 +45,12 @@ public class CO_ObjectiveHUD_Script : MonoBehaviour
         {
             Debug.LogWarning($"{name}: no TMP_Text to write the objective into.", this);
         }
+
+        GameObject player = GameObject.FindGameObjectWithTag(playerTag);
+        if (player != null)
+        {
+            stack = player.GetComponent<CO_WorkStack_Script>();
+        }
     }
 
     private void OnEnable()
@@ -44,6 +59,11 @@ public class CO_ObjectiveHUD_Script : MonoBehaviour
         // not have set Instance yet. Try now, and keep trying in Update until it
         // appears, rather than giving up and leaving the label blank forever.
         TryBind();
+
+        if (stack != null)
+        {
+            stack.FoldersChanged += OnFoldersChanged;
+        }
     }
 
     private void OnDisable()
@@ -53,6 +73,16 @@ public class CO_ObjectiveHUD_Script : MonoBehaviour
             tracker.ProgressChanged -= Refresh;
             tracker = null;
         }
+
+        if (stack != null)
+        {
+            stack.FoldersChanged -= OnFoldersChanged;
+        }
+    }
+
+    private void OnFoldersChanged(int previous, int current)
+    {
+        Refresh();
     }
 
     private void Update()
@@ -92,12 +122,20 @@ public class CO_ObjectiveHUD_Script : MonoBehaviour
             return;
         }
 
-        bool complete = tracker.IsComplete;
-
-        label.text = complete
-            ? completeText
-            : string.Format(progressFormat, tracker.CollectedCount, tracker.RequiredCount);
-
-        label.color = complete ? completeColour : progressColour;
+        if (!tracker.IsComplete)
+        {
+            label.text = string.Format(progressFormat, tracker.CollectedCount, tracker.RequiredCount);
+            label.color = progressColour;
+        }
+        else if (stack != null && stack.Count > 0)
+        {
+            label.text = blockedText;
+            label.color = blockedColour;
+        }
+        else
+        {
+            label.text = completeText;
+            label.color = completeColour;
+        }
     }
 }
