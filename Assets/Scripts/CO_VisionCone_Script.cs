@@ -34,6 +34,9 @@ public class CO_VisionCone_Script : MonoBehaviour
     [SerializeField] private Color fillColour = new Color(1f, 0.8f, 0.1f, 0.5f);
     [SerializeField] private Color noticedColour = new Color(1f, 0.2f, 0.15f, 0.5f);
 
+    [Tooltip("While the coworker ignores the player after handing over work: \"off duty\".")]
+    [SerializeField] private Color ignoringColour = new Color(0.55f, 0.55f, 0.55f, 0.25f);
+
     private static readonly int BaseColourId = Shader.PropertyToID("_BaseColor");
 
     private Mesh coneShape;
@@ -45,7 +48,7 @@ public class CO_VisionCone_Script : MonoBehaviour
     private Vector3[] rayDirections;
     private Vector3[] vertices;
     private int[] triangles;
-    private bool wasNoticed;
+    private Color currentColour;
     private float floorHeight;
 
     private void Awake()
@@ -79,6 +82,7 @@ public class CO_VisionCone_Script : MonoBehaviour
         baseRenderer = baseMesh.GetComponent<MeshRenderer>();
         fillRenderer = fillMesh.GetComponent<MeshRenderer>();
         block = new MaterialPropertyBlock();
+        currentColour = unawareColour;
         SetColour(baseRenderer, unawareColour);
         SetColour(fillRenderer, fillColour);
     }
@@ -100,10 +104,11 @@ public class CO_VisionCone_Script : MonoBehaviour
         UpdateMesh(fillShape, fillRadius, fillLift);
         fillRenderer.enabled = fillRadius > 0f;
 
-        if (noticed != wasNoticed)
+        Color colour = detection.IsIgnoringPlayer ? ignoringColour : noticed ? noticedColour : unawareColour;
+        if (colour != currentColour)
         {
-            wasNoticed = noticed;
-            SetColour(baseRenderer, noticed ? noticedColour : unawareColour);
+            currentColour = colour;
+            SetColour(baseRenderer, colour);
         }
     }
 

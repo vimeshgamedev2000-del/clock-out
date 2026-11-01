@@ -16,7 +16,7 @@ MonoBehaviour:
   speedPenaltyPerFolder: 0.05
   maxSpeedPenalty: 0.4
   footstepFolders: 4
-  footstepBaseRadius: 2
+  footstepBaseRadius: 3
   footstepRadiusPerFolder: 0.5
   stepLength: 0.8
   swayFolders: 8

@@ -55,6 +55,9 @@ public class CO_EnemyAI_Script : MonoBehaviour
 
     private void Update()
     {
+        // Sight keeps scanning during the cooldown, but the meter stays empty.
+        detection.IgnorePlayer(IsJustDelegated);
+
         UpdateState();
 
         switch (CurrentState)

@@ -53,6 +53,7 @@ namespace ClockOut.Tests
             CO_WorkStack_Script stack = player.GetComponent<CO_WorkStack_Script>();
             GameObject enemy = SpawnInstantEnemy("Enemy", Vector3.zero);
             CO_EnemyAI_Script ai = enemy.GetComponent<CO_EnemyAI_Script>();
+            CO_EnemyDetection_Script detection = enemy.GetComponent<CO_EnemyDetection_Script>();
 
             yield return CO_DistractionTestScene_Script.WaitUntil(
                 () => stack.Count > 0, "the coworker to hand over work", 10f);
@@ -71,6 +72,9 @@ namespace ClockOut.Tests
                 EnemyState state = StateOf(enemy);
                 Assert.That(state, Is.Not.EqualTo(EnemyState.Chasing).And.Not.EqualTo(EnemyState.Attacking),
                     "a coworker who just delegated ignores the player");
+                Assert.That(detection.IsIgnoringPlayer, Is.True, "its sight is told to ignore the player");
+                Assert.That(detection.NoticeLevel, Is.EqualTo(0f),
+                    "the meter stays empty, so no yellow band, red cone or \"!\"");
                 yield return null;
             }
 

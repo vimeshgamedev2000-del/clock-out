@@ -48,7 +48,13 @@ public class CO_EnemyDetection_Script : MonoBehaviour
     public float NoticeLevel { get; private set; }
 
     /// <summary>True while the player is in view and the meter is full: the enemy acts on what it sees.</summary>
-    public bool HasNoticedPlayer => HasDetectedPlayer && NoticeLevel >= 1f;
+    public bool HasNoticedPlayer => HasDetectedPlayer && NoticeLevel >= 1f && !IsIgnoringPlayer;
+
+    /// <summary>
+    /// True while the enemy has been told to ignore the player (just handed over work):
+    /// the meter stays empty, so the cone and badge don't read as a threat.
+    /// </summary>
+    public bool IsIgnoringPlayer { get; private set; }
 
     // Read by the in-game vision cone so it draws exactly the area this script tests.
     public float DetectionRadius => detectionRadius;
@@ -76,11 +82,25 @@ public class CO_EnemyDetection_Script : MonoBehaviour
         UpdateNoticeMeter();
     }
 
+    /// <summary>
+    /// Set by CO_EnemyAI_Script during its "just delegated" cooldown. Starting to
+    /// ignore empties the meter at once, so the red cone and "!" drop with the catch.
+    /// </summary>
+    public void IgnorePlayer(bool ignore)
+    {
+        if (ignore && !IsIgnoringPlayer)
+        {
+            NoticeLevel = 0f;
+        }
+
+        IsIgnoringPlayer = ignore;
+    }
+
     private void UpdateNoticeMeter()
     {
         bool wasNoticed = NoticeLevel >= 1f;
 
-        if (HasDetectedPlayer)
+        if (HasDetectedPlayer && !IsIgnoringPlayer)
         {
             NoticeLevel = noticeTime <= 0f ? 1f : Mathf.Min(1f, NoticeLevel + Time.deltaTime / noticeTime);
         }

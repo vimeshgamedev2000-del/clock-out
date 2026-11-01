@@ -29,7 +29,7 @@ public class CO_WorkStackTuning_Script : ScriptableObject
 
     [Tooltip("Footstep noise radius before folders are added, in metres.")]
     [Min(0f)]
-    [SerializeField] private float footstepBaseRadius = 2f;
+    [SerializeField] private float footstepBaseRadius = 3f;
 
     [Tooltip("Extra footstep noise radius per folder carried, in metres.")]
     [Min(0f)]
