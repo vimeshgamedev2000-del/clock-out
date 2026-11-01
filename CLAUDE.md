@@ -27,6 +27,12 @@ Before the first Notion call, run `notion-get-self`. If the workspace isn't "Vim
 6. For tasks about ideas, design evaluation, trends, launch or metrics, use the matching `game-trend-skills` skill (`Docs/PROCESS.md` §3.2).
 7. Whenever a task in the chat is finished, rename the chat (session title) to a short summary of what was done in it, and update the name as more work lands.
 
+## After building or changing a core system
+Once your own checks pass (PlayMode tests, Play mode), hand the user a **playtest brief** in the chat (`PROCESS.md` §3.2):
+1. **How it works:** a plain description of the system as a player sees it, with the numbers that matter.
+2. **Test cases:** 5–8 manual cases to try in Play mode in the real level. Each has a name, the steps (where to go, what to do), what should happen, and what to watch for. Cover the main path, the edge cases and how the system meets the ones next to it.
+3. **Not checked by Claude:** what your own checks couldn't cover, so the user knows where to look hardest.
+
 ## Project facts
 - Unity 6000.3.19f1, URP, PC + WebGL (itch.io), landscape 16:9, Input System, uGUI + TMP, AI Navigation.
 - Prefix `CO_` for scripts, scenes and our assets (`CO_<Name>_<Type>`, e.g. `CO_EnemyAI_Script`). All our scripts and `_Main` assets use it since 2026-11-01. The Unity folder is still `AI Patrol System`; Product Name is `Clock Out`.

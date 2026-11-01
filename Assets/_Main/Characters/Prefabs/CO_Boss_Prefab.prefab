@@ -177,6 +177,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 954491621057946981, guid: 5def39698ec6ef24e919cdb350e2b7ef, type: 3}
+      propertyPath: line
+      value: Let's circle back
+      objectReference: {fileID: 0}
+    - target: {fileID: 1108259289939689464, guid: 5def39698ec6ef24e919cdb350e2b7ef, type: 3}
+      propertyPath: m_text
+      value: Let's circle back
+      objectReference: {fileID: 0}
     - target: {fileID: 4064281311165115491, guid: 5def39698ec6ef24e919cdb350e2b7ef, type: 3}
       propertyPath: m_Name
       value: CO_Boss_Prefab
@@ -185,6 +193,10 @@ PrefabInstance:
       propertyPath: targetRenderer
       value: 
       objectReference: {fileID: 5024761845095284667}
+    - target: {fileID: 7426143409195165391, guid: 5def39698ec6ef24e919cdb350e2b7ef, type: 3}
+      propertyPath: foldersPerCatch
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 8220424685341730549, guid: 5def39698ec6ef24e919cdb350e2b7ef, type: 3}
       propertyPath: noticeTime
       value: 0

@@ -16,10 +16,12 @@ public class CO_PlayerController_Script : MonoBehaviour
     [SerializeField] private float gravity = 20f;
 
     private CharacterController controller;
+    private CO_WorkStack_Script workStack;
 
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
+        workStack = GetComponent<CO_WorkStack_Script>();
     }
 
     private void Update()
@@ -47,7 +49,9 @@ public class CO_PlayerController_Script : MonoBehaviour
 
         // Move rather than writing transform.position, so walls are collided
         // against instead of passed straight through.
-        Vector3 velocity = move * moveSpeed;
+        // Carried work slows the player down (GDD §5.7).
+        float speed = workStack != null ? moveSpeed * workStack.SpeedMultiplier : moveSpeed;
+        Vector3 velocity = move * speed;
 
         // A little constant downward push keeps the controller settled on the
         // floor; without it isGrounded flickers and it can creep up over edges.

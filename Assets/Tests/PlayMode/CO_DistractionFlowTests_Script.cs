@@ -274,8 +274,13 @@ namespace ClockOut.Tests
             GameObject shredderObject = scene.SpawnBlock(new Vector3(0f, 0f, 6f));
             CO_Shredder_Script shredder = shredderObject.AddComponent<CO_Shredder_Script>();
 
-            // Long enough that only the coworker can stop it.
+            // Long enough that only the coworker can stop it, and slow enough that
+            // the player's folders last until the coworker arrives.
             CO_DistractionTestScene_Script.SetField(shredder, "runDuration", 60f);
+            CO_DistractionTestScene_Script.SetField(shredder, "secondsPerFolder", 3f);
+
+            CO_WorkStack_Script stack = player.GetComponent<CO_WorkStack_Script>();
+            stack.TryHandWork(9, player);
 
             GameObject near = scene.SpawnEnemy("Near", Vector3.zero);
             GameObject far = scene.SpawnEnemy("Far", new Vector3(4f, 0f, 0f));
@@ -297,6 +302,7 @@ namespace ClockOut.Tests
 
             Assert.That(farInvestigated, Is.False, "only one enemy goes");
             Assert.That(shredder.FoldersShredded, Is.GreaterThan(0), "it shredded while it ran");
+            Assert.That(stack.Count, Is.EqualTo(9 - shredder.FoldersShredded), "every shredded folder came off the player's stack");
             Assert.That(Vector3.Distance(near.transform.position, shredder.transform.position), Is.LessThan(3f),
                 "the nearest enemy is the one that came and switched it off");
         }

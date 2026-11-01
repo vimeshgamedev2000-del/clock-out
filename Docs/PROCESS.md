@@ -96,6 +96,7 @@ The GDD and the Tech Doc must never repeat each other. Link to the other doc ins
 - **Feature not in the GDD, or contradicting it?** Stop and ask whether to add or change it. Then update the GDD, bump its version and add a Change Log line.
 - **Feedback-first.** With every gameplay change, propose the player feedback for it (§9) as one short list with a recommended pick. Build only what you approve.
 - **After code:** say which GameObject or prefab gets the script, what to wire in the Inspector, and how to test it in Play mode.
+- **Playtest brief after a core system** (user rule, 2026-11-01): once a core system is built or changed and Claude's own checks pass, Claude gives a brief in the chat: (1) how the system works, as a player sees it, with the numbers that matter; (2) 5–8 manual test cases for Play mode in the real level, each with a name, steps, the expected result and what to watch for, covering the main path, the edge cases and how it meets the systems next to it; (3) what Claude's own checks didn't cover. Findings from these runs go into the Playtests page as `B-`/`T-` items or GDD changes (§11.1).
 - **Git:** never commit or push unless asked. Work on a feature branch, not `main`.
 - **Chat:** short and plain, answer first. One question at a time, with a recommended answer.
 - **Use `game-trend-skills`** (user rule, 2026-11-01) wherever one fits, and say in one line which one: `brainstorming-game-ideas` for pitches (§13.1); `evaluating-game-ideas` for the keep/kill call (§4) and continue / pivot / drop; `scanning-game-trends` and `scouting-social-trends` for GDD "Similar games"; `launching-on-zero-budget` for shipping and the itch page (§11–§12); `tracking-game-metrics` for playtests and launch numbers; `writing-game-agent-briefs` for session or agent briefs. Not for pure coding or scene work.
@@ -616,6 +617,7 @@ this file only points there. If this file disagrees with them, the docs win: say
 
 ## Change Log
 
+- **2026-11-01 — §3.2: playtest brief after a core system.** — User rule: after building a core system, describe how it works and give manual test cases to try in Play mode.
 - **2026-11-01 — §5.4 packages:** DOTween, Feel and a UI art pack are the defaults for UI motion, layered game feel and UI art, with usage rules.
 - **2026-11-01 — Created** from the Foxtale Studio process (Notion: Project Setup, Unity Coding Standards, GDD, Technical Documentation, Game Feel Playbook; Killer Vibe `CLAUDE.md` and `Docs/`; Snow Rivals `CLAUDE.md`; `prototype-fast` skill). Adapted for solo portfolio work: Markdown in the repo, Git + GitHub, platform per game, lean process, case-study README.
 - **2026-11-01 — §3.2: use `game-trend-skills` wherever one fits.** — User rule for all future tasks.

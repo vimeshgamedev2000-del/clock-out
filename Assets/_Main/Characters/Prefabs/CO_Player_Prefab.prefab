@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &67973885082467463
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6998918020392319825}
+  m_Layer: 0
+  m_Name: Work Stack
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6998918020392319825
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 67973885082467463}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.05, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2591537054433683086}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &9089522020027071901
 GameObject:
   m_ObjectHideFlags: 0
@@ -12,6 +43,8 @@ GameObject:
   - component: {fileID: 3670794205943457079}
   - component: {fileID: 2655242689868197739}
   - component: {fileID: 3674233078351744817}
+  - component: {fileID: 1461529474517824823}
+  - component: {fileID: 5271545538763088062}
   m_Layer: 0
   m_Name: CO_Player_Prefab
   m_TagString: Player
@@ -33,6 +66,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1093905057349941325}
+  - {fileID: 6998918020392319825}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!143 &3670794205943457079
@@ -92,6 +126,53 @@ MonoBehaviour:
     m_Bits: 4294967295
   interactKey: 19
   promptLabel: {fileID: 0}
+  promptAnchor: {fileID: 0}
+  promptHeight: 0.4
+  holdMeter: {fileID: 0}
+  holdFill: {fileID: 0}
+  completePunch: 0.15
+--- !u!114 &1461529474517824823
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9089522020027071901}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fefb8a3e8a79d3c428b6d8793d7e44e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ClockOut::CO_WorkStack_Script
+  tuning: {fileID: 11400000, guid: 820bd4a3da48417469ba36f1ed19fea6, type: 2}
+  wallMask:
+    serializedVersion: 2
+    m_Bits: 64
+--- !u!114 &5271545538763088062
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9089522020027071901}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c525a94566bece94c9661a0638db7596, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: ClockOut::CO_WorkStackView_Script
+  stack: {fileID: 1461529474517824823}
+  anchor: {fileID: 6998918020392319825}
+  folderPrefab: {fileID: 6751685848373340892, guid: 556148ac861b4ce4d87890b610482baf, type: 3}
+  folderSpacing: 0.15
+  jitterAngle: 12
+  landHeight: 0.6
+  landTime: 0.18
+  landStagger: 0.08
+  squash: 0.25
+  popTime: 0.2
+  dropDistance: 0.9
+  dropLinger: 1.5
+  swayAngle: 3
+  swaySpeed: 1.6
 --- !u!1001 &622883953889894310
 PrefabInstance:
   m_ObjectHideFlags: 0

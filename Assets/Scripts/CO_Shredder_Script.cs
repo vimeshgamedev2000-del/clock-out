@@ -7,8 +7,8 @@ using UnityEngine;
 /// and pulsing a noise into CO_NoiseManager_Script, so one coworker comes over to
 /// check. The coworker who finds it switches it off.
 ///
-/// Until the work stack exists (T-04) there are no folders to take: each one is
-/// counted and logged, and the shredder never runs out.
+/// Each folder comes off the player's CO_WorkStack_Script. It can't be started
+/// with an empty stack, and stops early once there is nothing left to shred.
 /// </summary>
 [RequireComponent(typeof(Collider))]
 public class CO_Shredder_Script : MonoBehaviour, CO_IHoldInteractable_Script, CO_INoiseSource_Script
@@ -29,6 +29,9 @@ public class CO_Shredder_Script : MonoBehaviour, CO_IHoldInteractable_Script, CO
     [Tooltip("Seconds before it can be started again after stopping.")]
     [SerializeField] private float reuseDelay = 3f;
 
+    [Tooltip("Tag of the player whose work stack it shreds.")]
+    [SerializeField] private string playerTag = "Player";
+
     [Header("Noise")]
     [Tooltip("How far the grinding carries, in metres. Every enemy inside hears it.")]
     [SerializeField] private float noiseRadius = 8f;
@@ -48,20 +51,22 @@ public class CO_Shredder_Script : MonoBehaviour, CO_IHoldInteractable_Script, CO
     private float nextPulseTime;
     private float stopTime;
     private float readyTime;
+    private CO_WorkStack_Script playerStack;
 
     private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
 
     /// <summary>True while it is running and making noise.</summary>
     public bool IsRunning { get; private set; }
 
-    /// <summary>Folders shredded so far. Stands in for the work stack until T-04.</summary>
+    /// <summary>Folders shredded this floor.</summary>
     public int FoldersShredded { get; private set; }
 
     public string InteractionPrompt => prompt;
 
     public float HoldDuration => holdDuration;
 
-    public bool CanInteract => !IsRunning && Time.time >= readyTime;
+    public bool CanInteract =>
+        !IsRunning && Time.time >= readyTime && ResolveStack() != null && playerStack.Count > 0;
 
     public Transform Transform => transform;
 
@@ -93,6 +98,13 @@ public class CO_Shredder_Script : MonoBehaviour, CO_IHoldInteractable_Script, CO
         while (progress >= secondsPerFolder)
         {
             progress -= secondsPerFolder;
+
+            if (playerStack == null || !playerStack.TryTakeFolder())
+            {
+                Stop("nothing left to shred");
+                return;
+            }
+
             FoldersShredded++;
             Debug.Log($"{name}: shredded a folder ({FoldersShredded} so far).", this);
         }
@@ -131,6 +143,21 @@ public class CO_Shredder_Script : MonoBehaviour, CO_IHoldInteractable_Script, CO
 
         Debug.Log($"{name}: switched off by {investigator.name}.", this);
         Stop("investigated");
+    }
+
+    /// <summary>
+    /// Finds the player's stack by tag, retrying while it is missing, so a shredder
+    /// placed before the player spawns still finds it.
+    /// </summary>
+    private CO_WorkStack_Script ResolveStack()
+    {
+        if (playerStack == null)
+        {
+            GameObject player = GameObject.FindGameObjectWithTag(playerTag);
+            playerStack = player != null ? player.GetComponent<CO_WorkStack_Script>() : null;
+        }
+
+        return playerStack;
     }
 
     private void Stop(string reason)

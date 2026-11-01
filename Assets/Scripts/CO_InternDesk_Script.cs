@@ -3,10 +3,8 @@ using UnityEngine;
 /// <summary>
 /// The silent, slow way to get rid of work (GDD §5.8). Each full hold of E for
 /// <see cref="holdDuration"/> hands the intern one folder, up to
-/// <see cref="capacity"/> per floor. Makes no noise. A full in-tray stops being usable.
-///
-/// Until the work stack exists (T-04) there are no folders to take: each one is
-/// counted and logged.
+/// <see cref="capacity"/> per floor, taken off the player's CO_WorkStack_Script.
+/// Makes no noise. A full in-tray, or an empty stack, stops it being usable.
 /// </summary>
 [RequireComponent(typeof(Collider))]
 public class CO_InternDesk_Script : MonoBehaviour, CO_IHoldInteractable_Script
@@ -21,6 +19,9 @@ public class CO_InternDesk_Script : MonoBehaviour, CO_IHoldInteractable_Script
     [Tooltip("Folders the intern takes per floor before the in-tray is full.")]
     [SerializeField] private int capacity = 3;
 
+    [Tooltip("Tag of the player whose work stack it takes from.")]
+    [SerializeField] private string playerTag = "Player";
+
     [Header("Feedback")]
     [Tooltip("Renderer tinted when full. Optional.")]
     [SerializeField] private Renderer targetRenderer;
@@ -29,10 +30,11 @@ public class CO_InternDesk_Script : MonoBehaviour, CO_IHoldInteractable_Script
     [SerializeField] private Color fullColour = new Color(0.45f, 0.45f, 0.45f);
 
     private MaterialPropertyBlock propertyBlock;
+    private CO_WorkStack_Script playerStack;
 
     private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
 
-    /// <summary>Folders handed over this floor. Stands in for the work stack until T-04.</summary>
+    /// <summary>Folders handed over this floor.</summary>
     public int FoldersTaken { get; private set; }
 
     public bool IsFull => FoldersTaken >= capacity;
@@ -41,7 +43,7 @@ public class CO_InternDesk_Script : MonoBehaviour, CO_IHoldInteractable_Script
 
     public float HoldDuration => holdDuration;
 
-    public bool CanInteract => !IsFull;
+    public bool CanInteract => !IsFull && ResolveStack() != null && playerStack.Count > 0;
 
     private void Awake()
     {
@@ -56,7 +58,7 @@ public class CO_InternDesk_Script : MonoBehaviour, CO_IHoldInteractable_Script
 
     public void Interact(GameObject interactor)
     {
-        if (IsFull)
+        if (IsFull || ResolveStack() == null || !playerStack.TryTakeFolder())
         {
             return;
         }
@@ -69,6 +71,21 @@ public class CO_InternDesk_Script : MonoBehaviour, CO_IHoldInteractable_Script
             Debug.Log($"{name}: the in-tray is full.", this);
             ApplyColour();
         }
+    }
+
+    /// <summary>
+    /// Finds the player's stack by tag, retrying while it is missing, so a desk
+    /// placed before the player spawns still finds it.
+    /// </summary>
+    private CO_WorkStack_Script ResolveStack()
+    {
+        if (playerStack == null)
+        {
+            GameObject player = GameObject.FindGameObjectWithTag(playerTag);
+            playerStack = player != null ? player.GetComponent<CO_WorkStack_Script>() : null;
+        }
+
+        return playerStack;
     }
 
     private void ApplyColour()

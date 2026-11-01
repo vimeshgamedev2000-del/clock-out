@@ -177,6 +177,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 954491621057946981, guid: 5def39698ec6ef24e919cdb350e2b7ef, type: 3}
+      propertyPath: line
+      value: Did you try restarting?
+      objectReference: {fileID: 0}
+    - target: {fileID: 1108259289939689464, guid: 5def39698ec6ef24e919cdb350e2b7ef, type: 3}
+      propertyPath: m_text
+      value: Did you try restarting?
+      objectReference: {fileID: 0}
     - target: {fileID: 4064281311165115491, guid: 5def39698ec6ef24e919cdb350e2b7ef, type: 3}
       propertyPath: m_Name
       value: CO_ITGuy_Prefab

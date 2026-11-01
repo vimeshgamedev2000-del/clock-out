@@ -26,6 +26,12 @@ public class CO_EnemyAI_Script : MonoBehaviour
     [Tooltip("Units travelled per second while chasing. Usually above patrol speed.")]
     [SerializeField] private float chaseSpeed = 3.5f;
 
+    [Header("Catch")]
+    [Tooltip("Seconds after handing over work during which this enemy ignores the player and goes back to its route.")]
+    [SerializeField] private float delegatedCooldown = 8f;
+
+    private float delegatedUntil = float.NegativeInfinity;
+
     private CO_EnemyPatrol_Script movement;
     private CO_EnemyDetection_Script detection;
     private CO_EnemyAttack_Script attack;
@@ -34,6 +40,9 @@ public class CO_EnemyAI_Script : MonoBehaviour
 
     /// <summary>Current behaviour, read by the state indicator.</summary>
     public EnemyState CurrentState { get; private set; } = EnemyState.Patrolling;
+
+    /// <summary>True during the "just delegated" cooldown after a catch: the player is ignored.</summary>
+    public bool IsJustDelegated => Time.time < delegatedUntil;
 
     private void Awake()
     {
@@ -122,7 +131,8 @@ public class CO_EnemyAI_Script : MonoBehaviour
     private EnemyState DecideState()
     {
         // A glimpse only fills the notice meter; the enemy reacts once it is full.
-        if (detection.HasNoticedPlayer)
+        // Having just handed over work, it walks off instead (GDD §6.1).
+        if (detection.HasNoticedPlayer && !IsJustDelegated)
         {
             Vector3 playerPosition = detection.DetectedPlayer.position;
 
@@ -200,6 +210,10 @@ public class CO_EnemyAI_Script : MonoBehaviour
         // Hold position but keep facing the player, so they cannot slip around
         // the side while the enemy is swinging.
         movement.FaceTowards(detection.DetectedPlayer.position);
-        attack.TryAttack();
+
+        if (attack.TryAttack(detection.DetectedPlayer))
+        {
+            delegatedUntil = Time.time + delegatedCooldown;
+        }
     }
 }

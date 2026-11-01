@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2745a6abe163efc46938d47ef0395404, type: 3}
+  m_Name: CO_WorkStackTuning_Data
+  m_EditorClassIdentifier: ClockOut.Data::CO_WorkStackTuning_Script
+  maxFolders: 10
+  speedPenaltyPerFolder: 0.05
+  maxSpeedPenalty: 0.4
+  footstepFolders: 4
+  footstepBaseRadius: 2
+  footstepRadiusPerFolder: 0.5
+  stepLength: 0.8
+  swayFolders: 8
+  dropNoiseRadius: 6
+  dropCooldown: 1
+  graceDuration: 2

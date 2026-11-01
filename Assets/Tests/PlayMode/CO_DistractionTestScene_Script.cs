@@ -142,8 +142,12 @@ namespace ClockOut.Tests
             return device;
         }
 
-        /// <summary>The player: tagged, and carrying the interactor.</summary>
-        public GameObject SpawnPlayer(Vector3 position)
+        /// <summary>
+        /// The player: tagged, and carrying the interactor and an empty work stack.
+        /// With a body it gets a CharacterController instead of a box, so it can
+        /// walk into walls.
+        /// </summary>
+        public GameObject SpawnPlayer(Vector3 position, bool withBody = false)
         {
             GameObject player = new GameObject("TestPlayer");
             player.SetActive(false);
@@ -151,11 +155,48 @@ namespace ClockOut.Tests
             Track(player);
 
             player.tag = "Player";
-            player.AddComponent<BoxCollider>();
+            if (withBody)
+            {
+                player.AddComponent<CharacterController>();
+            }
+            else
+            {
+                player.AddComponent<BoxCollider>();
+            }
+
             player.AddComponent<CO_PlayerInteractor_Script>();
+            AddWorkStack(player);
 
             player.SetActive(true);
             return player;
+        }
+
+        /// <summary>
+        /// Adds a work stack with default tuning. Call it while the object is
+        /// inactive, as a prefab would have it, so the tuning is in place before Awake.
+        /// </summary>
+        public static CO_WorkStack_Script AddWorkStack(GameObject player)
+        {
+            CO_WorkStack_Script stack = player.AddComponent<CO_WorkStack_Script>();
+
+            // Made from the field's type: the tuning type lives in ClockOut.Data,
+            // which this test assembly doesn't reference.
+            FieldInfo tuningField = typeof(CO_WorkStack_Script).GetField(
+                "tuning", BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.That(tuningField, Is.Not.Null, "CO_WorkStack_Script has no field 'tuning' - the test needs updating.");
+            tuningField.SetValue(stack, ScriptableObject.CreateInstance(tuningField.FieldType));
+
+            return stack;
+        }
+
+        /// <summary>Changes one number on a stack's tuning, standing in for the asset's Inspector.</summary>
+        public static void SetTuning(CO_WorkStack_Script stack, string fieldName, object value)
+        {
+            FieldInfo tuningField = typeof(CO_WorkStack_Script).GetField(
+                "tuning", BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.That(tuningField, Is.Not.Null, "CO_WorkStack_Script has no field 'tuning' - the test needs updating.");
+
+            SetField(tuningField.GetValue(stack), fieldName, value);
         }
 
         /// <summary>A solid cube, for crowding an enemy with colliders.</summary>

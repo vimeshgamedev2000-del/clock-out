@@ -1,9 +1,10 @@
 using UnityEngine;
 
 /// <summary>
-/// Placeholder attack: decides when the enemy is close enough to strike and
-/// paces the strikes on a cooldown. Deals no damage - it logs and flashes a
-/// gizmo, which is enough to demonstrate the timing.
+/// The catch (GDD §5.7): decides when the enemy is close enough to reach the
+/// player and, on a cooldown, tries to hand them work. The player's work stack
+/// refuses during its grace after the last catch, so the enemy keeps trying
+/// until it lands or the player gets away.
 /// </summary>
 public class CO_EnemyAttack_Script : MonoBehaviour
 {
@@ -16,14 +17,29 @@ public class CO_EnemyAttack_Script : MonoBehaviour
     [SerializeField] private float attackExitRange = 2.5f;
 
     [Header("Timing")]
-    [Tooltip("Seconds between attacks.")]
+    [Tooltip("Seconds between attempts to hand over work.")]
     [SerializeField] private float attackCooldown = 1f;
+
+    [Header("Work")]
+    [Tooltip("Folders this coworker hands over per catch (GDD §6: Boss 3, the rest 1).")]
+    [Min(1)]
+    [SerializeField] private int foldersPerCatch = 1;
 
     private float nextAttackTime;
     private float lastAttackTime = float.NegativeInfinity;
 
+    // Cached per target, so the lookup runs once per player rather than every swing.
+    private Transform stackOwner;
+    private CO_WorkStack_Script targetStack;
+
     /// <summary>How long the gizmo stays lit after a swing.</summary>
     private const float AttackFlashDuration = 0.15f;
+
+    /// <summary>Folders handed over per catch.</summary>
+    public int FoldersPerCatch => foldersPerCatch;
+
+    /// <summary>When this enemy last handed over work, for the catch line. Negative infinity before the first.</summary>
+    public float LastHandOffTime { get; private set; } = float.NegativeInfinity;
 
     private void OnValidate()
     {
@@ -54,21 +70,32 @@ public class CO_EnemyAttack_Script : MonoBehaviour
     }
 
     /// <summary>
-    /// Attacks if the cooldown has elapsed. Safe to call every frame; it paces
-    /// itself.
+    /// Tries to hand the target work if the cooldown has elapsed. Safe to call
+    /// every frame; it paces itself. Returns true on the frame work was handed over.
     /// </summary>
-    public void TryAttack()
+    public bool TryAttack(Transform target)
     {
         if (Time.time < nextAttackTime)
         {
-            return;
+            return false;
         }
 
         nextAttackTime = Time.time + attackCooldown;
         lastAttackTime = Time.time;
 
-        // Placeholder for a real attack: swap for damage, animation and VFX.
-        Debug.Log($"{name}: attack!", this);
+        if (stackOwner != target)
+        {
+            stackOwner = target;
+            targetStack = target.GetComponent<CO_WorkStack_Script>();
+        }
+
+        if (targetStack == null || !targetStack.TryHandWork(foldersPerCatch, gameObject))
+        {
+            return false;
+        }
+
+        LastHandOffTime = Time.time;
+        return true;
     }
 
     /// <summary>

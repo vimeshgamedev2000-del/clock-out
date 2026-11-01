@@ -210,6 +210,14 @@ namespace ClockOut.Tests
         [UnityTest]
         public IEnumerator TheInternTakesOneFolderPerHoldUpToThree()
         {
+            // The desk takes folders off the tagged player's stack.
+            GameObject player = interactor.gameObject;
+            player.SetActive(false);
+            player.tag = "Player";
+            CO_WorkStack_Script stack = CO_DistractionTestScene_Script.AddWorkStack(player);
+            player.SetActive(true);
+            stack.TryHandWork(5, player);
+
             CO_InternDesk_Script desk = SpawnInteractable<CO_InternDesk_Script>(new Vector3(1f, 0f, 0f));
             CO_DistractionTestScene_Script.SetField(desk, "holdDuration", 0.1f);
             yield return null;
@@ -223,6 +231,7 @@ namespace ClockOut.Tests
             }
 
             Assert.That(desk.FoldersTaken, Is.EqualTo(3), "one per hold, no more than the capacity");
+            Assert.That(stack.Count, Is.EqualTo(2), "each folder the intern took came off the player's stack");
             Assert.That(desk.CanInteract, Is.False, "a full tray is no longer usable");
             Assert.That(interactor.CurrentTarget, Is.Null, "and stops being offered");
         }
