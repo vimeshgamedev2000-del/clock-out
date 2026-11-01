@@ -2,6 +2,7 @@ using UnityEngine;
 
 /// <summary>
 /// A prop the player switches on to make noise - a radio, a TV, a generator.
+/// The player holds the key on it for <see cref="holdDuration"/> to switch it on.
 /// While it is running it pulses a noise into the CO_NoiseManager_Script, which alerts
 /// every enemy in earshot and sends exactly one of them over to look.
 ///
@@ -9,11 +10,14 @@ using UnityEngine;
 /// CO_INoiseSource_Script, when somebody came and found it.
 /// </summary>
 [RequireComponent(typeof(Collider))]
-public class CO_DistractionDevice_Script : MonoBehaviour, CO_IInteractable_Script, CO_INoiseSource_Script
+public class CO_DistractionDevice_Script : MonoBehaviour, CO_IHoldInteractable_Script, CO_INoiseSource_Script
 {
     [Header("Interaction")]
     [Tooltip("What the player is told they can do, shown by CO_PlayerInteractor_Script.")]
     [SerializeField] private string prompt = "Turn on radio";
+
+    [Tooltip("Seconds the player holds the key to switch it on.")]
+    [SerializeField] private float holdDuration = 1f;
 
     [Tooltip("Seconds before the device can be used again after switching off. " +
              "Set high to make each distraction a scarce resource.")]
@@ -59,6 +63,8 @@ public class CO_DistractionDevice_Script : MonoBehaviour, CO_IInteractable_Scrip
     public bool IsActive { get; private set; }
 
     public string InteractionPrompt => prompt;
+
+    public float HoldDuration => holdDuration;
 
     public bool CanInteract => !IsActive && !spent && Time.time >= readyTime;
 
@@ -179,6 +185,7 @@ public class CO_DistractionDevice_Script : MonoBehaviour, CO_IInteractable_Scrip
     {
         // A zero interval would emit a noise every frame, flooding the manager.
         pulseInterval = Mathf.Max(pulseInterval, 0.1f);
+        holdDuration = Mathf.Max(holdDuration, 0f);
         noiseRadius = Mathf.Max(noiseRadius, 0f);
     }
 

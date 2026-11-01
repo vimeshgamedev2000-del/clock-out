@@ -25,6 +25,7 @@ Before the first Notion call, run `notion-get-self`. If the workspace isn't "Vim
 4. Follow `Docs/PROCESS.md`: coding standards §7, game feel §9, Tech Doc rules §10.
 5. "What's next?" → query the **Checklist** database: the first item by `Order` with Status "In progress", or else the first "Open" one. Set Status (Open / In progress / Done) as work happens; a main item is Done only when all its Sub-items are (`PROCESS.md` §10.4).
 6. For tasks about ideas, design evaluation, trends, launch or metrics, use the matching `game-trend-skills` skill (`Docs/PROCESS.md` §3.2).
+7. Whenever a task in the chat is finished, rename the chat (session title) to a short summary of what was done in it, and update the name as more work lands.
 
 ## Project facts
 - Unity 6000.3.19f1, URP, PC + WebGL (itch.io), landscape 16:9, Input System, uGUI + TMP, AI Navigation.

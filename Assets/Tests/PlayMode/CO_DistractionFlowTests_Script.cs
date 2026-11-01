@@ -267,5 +267,38 @@ namespace ClockOut.Tests
                 () => StateOf(enemy) == EnemyState.Chasing || StateOf(enemy) == EnemyState.Attacking,
                 "the enemy to react to what it saw");
         }
+
+        [UnityTest]
+        public IEnumerator AStartedShredderSendsExactlyOneEnemyWhoSwitchesItOff()
+        {
+            GameObject shredderObject = scene.SpawnBlock(new Vector3(0f, 0f, 6f));
+            CO_Shredder_Script shredder = shredderObject.AddComponent<CO_Shredder_Script>();
+
+            // Long enough that only the coworker can stop it.
+            CO_DistractionTestScene_Script.SetField(shredder, "runDuration", 60f);
+
+            GameObject near = scene.SpawnEnemy("Near", Vector3.zero);
+            GameObject far = scene.SpawnEnemy("Far", new Vector3(4f, 0f, 0f));
+            CO_DistractionTestScene_Script.SetField(far.GetComponent<CO_EnemyHearing_Script>(), "standDownDelay", 0.4f);
+
+            // What the interactor calls once E has been held for HoldDuration.
+            shredder.Interact(player);
+            Assert.That(shredder.IsRunning, Is.True, "it runs without the key held");
+            Assert.That(shredder.CanInteract, Is.False, "a running shredder cannot be started again");
+
+            bool farInvestigated = false;
+            float deadline = Time.realtimeSinceStartup + 20f;
+            while (shredder.IsRunning)
+            {
+                Assert.That(Time.realtimeSinceStartup, Is.LessThan(deadline), "the coworker to switch it off");
+                farInvestigated |= StateOf(far) == EnemyState.Investigating;
+                yield return null;
+            }
+
+            Assert.That(farInvestigated, Is.False, "only one enemy goes");
+            Assert.That(shredder.FoldersShredded, Is.GreaterThan(0), "it shredded while it ran");
+            Assert.That(Vector3.Distance(near.transform.position, shredder.transform.position), Is.LessThan(3f),
+                "the nearest enemy is the one that came and switched it off");
+        }
     }
 }
