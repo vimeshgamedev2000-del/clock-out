@@ -36,7 +36,7 @@ Before the first Notion call, run `notion-get-self`. If the workspace isn't "Vim
   - **HKProductions Premium Casual GUI** (`Assets/Imported Assets/UI/HKProductions/`): sprites, badges, frames, buttons and the Montserrat TMP font for every HUD, screen and world-space marker. Its sprites are sliced (Multiple): load the `_0` sub-sprite.
   - **DOTween Pro** (`Assets/Plugins/Demigiant/`): every UI animation and simple tween (pop, fade, slide, punch). Use `DOTween.To` for `CanvasGroup`/`Image` fades and `SetLink(gameObject)` on every tween.
   - **Feel** (`Assets/Imported Assets/UI/Feel/`, assembly `MoreMountains.Tools`): use it where it improves the feel, for layered moments (spotted, caught, escape: freeze, camera nudge, shake, flash, sound) as `MMF_Player`s. `ClockOut` doesn't reference it yet: ask before adding the reference.
-- Git: public repo https://github.com/vimeshgamedev2000-del/clock-out (`main`, LFS). Work on `feature/<short-name>` branches; never commit or push unless asked. Third-party packs (everything in `Assets/Imported Assets/` except Kenney, and `Assets/Plugins/Demigiant/`) are gitignored: never commit them (Tech Doc D-16).
+- Git: public repo https://github.com/vimeshgamedev2000-del/clock-out (`main`, LFS). Work directly on `main`, like Plastic SCM: no feature branches, no PRs. When asked, commit and push straight to `main`; never commit or push unless asked. Third-party packs (everything in `Assets/Imported Assets/` except Kenney, and `Assets/Plugins/Demigiant/`) are gitignored: never commit them (Tech Doc D-16).
 - Scenes: ask before creating or editing any scene. Roles are in Tech Doc §3 (Notion).
 
 ## Game-specific rules
