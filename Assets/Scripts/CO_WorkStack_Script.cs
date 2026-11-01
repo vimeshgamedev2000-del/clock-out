@@ -3,7 +3,7 @@ using UnityEngine;
 
 /// <summary>
 /// The folders the player carries on their head (GDD §5.7). A catch hands work
-/// over; the shredder, the intern's desk and wall bumps take it away. The stack
+/// over; the shredder, the intern's desk, a reply-all and wall bumps take it away. The stack
 /// slows the player, makes their steps loud from 4 folders, drops a folder on a
 /// wall bump from 8, and ends the run at 10.
 ///
@@ -54,6 +54,12 @@ public class CO_WorkStack_Script : MonoBehaviour, CO_INoiseSource_Script
 
     /// <summary>Folders handed over by catches this floor, for the timesheet.</summary>
     public int FoldersReceived { get; private set; }
+
+    /// <summary>True once the player used a reply-all this floor. It works once per floor, and the timesheet marks it.</summary>
+    public bool HasRepliedAll { get; private set; }
+
+    /// <summary>True while a reply-all would forward something.</summary>
+    public bool CanReplyAll => !HasRepliedAll && !IsBuried && Count > 0;
 
     /// <summary>Raised with the previous and new count whenever folders are added or removed.</summary>
     public event Action<int, int> FoldersChanged;
@@ -138,6 +144,26 @@ public class CO_WorkStack_Script : MonoBehaviour, CO_INoiseSource_Script
 
         RemoveTopFolder();
         return true;
+    }
+
+    /// <summary>
+    /// Forwards the whole stack at once (reply-all PC). Works once per floor, whichever
+    /// PC is used; returns the folders forwarded, 0 when it was refused.
+    /// </summary>
+    public int TryReplyAll()
+    {
+        if (!CanReplyAll)
+        {
+            return 0;
+        }
+
+        int previous = Count;
+        Count = 0;
+        HasRepliedAll = true;
+
+        Debug.Log($"{name}: replied all and forwarded {previous} folder(s).", this);
+        FoldersChanged?.Invoke(previous, Count);
+        return previous;
     }
 
     /// <summary>Nobody can switch a stack off: the coworker had a look and goes back.</summary>
