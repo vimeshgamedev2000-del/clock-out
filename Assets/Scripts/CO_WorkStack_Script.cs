@@ -55,6 +55,9 @@ public class CO_WorkStack_Script : MonoBehaviour, CO_INoiseSource_Script
     /// <summary>Folders handed over by catches this floor, for the timesheet.</summary>
     public int FoldersReceived { get; private set; }
 
+    /// <summary>Catches that landed this floor ("tasks taken" on the timesheet). A Boss catch counts once.</summary>
+    public int CatchCount { get; private set; }
+
     /// <summary>True once the player used a reply-all this floor. It works once per floor, and the timesheet marks it.</summary>
     public bool HasRepliedAll { get; private set; }
 
@@ -119,6 +122,7 @@ public class CO_WorkStack_Script : MonoBehaviour, CO_INoiseSource_Script
         int previous = Count;
         Count = Mathf.Min(Count + folders, tuning.MaxFolders);
         FoldersReceived += Count - previous;
+        CatchCount++;
         graceEndTime = Time.time + tuning.GraceDuration;
 
         Debug.Log($"{name}: {from.name} handed over {folders} folder(s) ({Count}/{tuning.MaxFolders}).", this);

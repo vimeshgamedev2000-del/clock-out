@@ -217,7 +217,8 @@ namespace ClockOut.Tests
             return marker;
         }
 
-        private void Track(GameObject spawnedObject)
+        /// <summary>Destroys the object in TearDown with everything else this scene spawned.</summary>
+        public void Track(GameObject spawnedObject)
         {
             spawned.Add(spawnedObject);
         }
