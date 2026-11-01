@@ -50,6 +50,12 @@ public class CO_EnemyDetection_Script : MonoBehaviour
     /// <summary>True while the player is in view and the meter is full: the enemy acts on what it sees.</summary>
     public bool HasNoticedPlayer => HasDetectedPlayer && NoticeLevel >= 1f;
 
+    // Read by the in-game vision cone so it draws exactly the area this script tests.
+    public float DetectionRadius => detectionRadius;
+    public float ViewAngle => viewAngle;
+    public LayerMask ObstacleMask => obstacleMask;
+    public float EyeHeight => eyeHeight;
+
     // Looked up once by tag and kept, so each scan is three cheap checks rather
     // than a physics query. An overlap query was the obvious way to write this,
     // but it has to be given a fixed buffer, and a crowded corner fills that

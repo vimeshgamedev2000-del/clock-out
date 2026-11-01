@@ -24,8 +24,7 @@ Before the first Notion call, run `notion-get-self`. If the workspace isn't "Vim
 3. Before changing an existing feature or adding a new one, read its entry on the **Functionality** page, and update that page in the same session whenever a feature is added, changed or removed (`PROCESS.md` §10.3).
 4. Follow `Docs/PROCESS.md`: coding standards §7, game feel §9, Tech Doc rules §10.
 5. "What's next?" → query the **Checklist** database: the first item by `Order` with Status "In progress", or else the first "Open" one. Set Status (Open / In progress / Done) as work happens; a main item is Done only when all its Sub-items are (`PROCESS.md` §10.4).
-6. Remind the user in one line if T-01 (Git + GitHub) is still open.
-7. For tasks about ideas, design evaluation, trends, launch or metrics, use the matching `game-trend-skills` skill (`Docs/PROCESS.md` §3.2).
+6. For tasks about ideas, design evaluation, trends, launch or metrics, use the matching `game-trend-skills` skill (`Docs/PROCESS.md` §3.2).
 
 ## Project facts
 - Unity 6000.3.19f1, URP, PC + WebGL (itch.io), landscape 16:9, Input System, uGUI + TMP, AI Navigation.
@@ -36,7 +35,7 @@ Before the first Notion call, run `notion-get-self`. If the workspace isn't "Vim
   - **HKProductions Premium Casual GUI** (`Assets/Imported Assets/UI/HKProductions/`): sprites, badges, frames, buttons and the Montserrat TMP font for every HUD, screen and world-space marker. Its sprites are sliced (Multiple): load the `_0` sub-sprite.
   - **DOTween Pro** (`Assets/Plugins/Demigiant/`): every UI animation and simple tween (pop, fade, slide, punch). Use `DOTween.To` for `CanvasGroup`/`Image` fades and `SetLink(gameObject)` on every tween.
   - **Feel** (`Assets/Imported Assets/UI/Feel/`, assembly `MoreMountains.Tools`): use it where it improves the feel, for layered moments (spotted, caught, escape: freeze, camera nudge, shake, flash, sound) as `MMF_Player`s. `ClockOut` doesn't reference it yet: ask before adding the reference.
-- Not under version control yet (T-01). Once it is: feature branches, and never commit or push unless asked.
+- Git: public repo https://github.com/vimeshgamedev2000-del/clock-out (`main`, LFS). Work on `feature/<short-name>` branches; never commit or push unless asked. Third-party packs (everything in `Assets/Imported Assets/` except Kenney, and `Assets/Plugins/Demigiant/`) are gitignored: never commit them (Tech Doc D-16).
 - Scenes: ask before creating or editing any scene. Roles are in Tech Doc §3 (Notion).
 
 ## Game-specific rules
