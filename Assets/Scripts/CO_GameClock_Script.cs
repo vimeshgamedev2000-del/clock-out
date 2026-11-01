@@ -11,8 +11,12 @@ public class CO_GameClock_Script : MonoBehaviour
     [Tooltip("Start time, clock speed and the timesheet title rules.")]
     [SerializeField] private CO_ClockTuning_Script tuning;
 
+    // A float near 61200 (5 PM) only has 1/128 s steps, so adding each frame's
+    // small slice to it rounds the same way every frame and the clock runs slow.
+    private double gameSeconds;
+
     /// <summary>Clock time now, in game seconds after midnight.</summary>
-    public float GameSeconds { get; private set; }
+    public float GameSeconds => (float)gameSeconds;
 
     /// <summary>False once the floor has ended.</summary>
     public bool IsRunning { get; private set; } = true;
@@ -21,14 +25,14 @@ public class CO_GameClock_Script : MonoBehaviour
 
     private void Awake()
     {
-        GameSeconds = tuning.StartSeconds;
+        gameSeconds = tuning.StartSeconds;
     }
 
     private void Update()
     {
         if (IsRunning)
         {
-            GameSeconds += Time.deltaTime * tuning.GameSecondsPerRealSecond;
+            gameSeconds += (double)Time.deltaTime * tuning.GameSecondsPerRealSecond;
         }
     }
 
