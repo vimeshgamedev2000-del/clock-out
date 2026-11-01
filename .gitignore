@@ -1,0 +1,54 @@
+# Unity generated
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+/[Mm]emoryCaptures/
+/[Rr]ecordings/
+/Assets/AssetStoreTools*
+
+# IDE and solution files (Unity regenerates them)
+.vs/
+.vscode/
+.idea/
+*.csproj
+*.unityproj
+*.sln
+*.slnx
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+
+# Crash reports and builds
+sysinfo.txt
+crashlytics-buildid.txt
+*.apk
+*.aab
+*.unitypackage
+*.app
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Third-party packs: their licences don't allow redistributing the raw files (PROCESS.md §6).
+# Import them yourself; the README lists them. Kenney Mini Characters is CC0 and stays in.
+/Assets/Imported Assets/*
+!/Assets/Imported Assets/Kenney Mini Characters/
+!/Assets/Imported Assets/Kenney Mini Characters.meta
+/Assets/Plugins/Demigiant/
+/Assets/Plugins/Demigiant.meta
