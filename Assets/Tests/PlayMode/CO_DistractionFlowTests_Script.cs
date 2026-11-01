@@ -78,6 +78,41 @@ namespace ClockOut.Tests
         }
 
         [UnityTest]
+        public IEnumerator ADeskPhoneKeepsItsInvestigatorLongerThanARadio()
+        {
+            // Far enough apart that neither enemy hears the other's source.
+            CO_DistractionDevice_Script phone = scene.SpawnRadio("Phone", new Vector3(-15f, 0f, 5f), 8f);
+            CO_DistractionDevice_Script radio = scene.SpawnRadio("Radio", new Vector3(15f, 0f, 5f), 8f);
+            CO_DistractionTestScene_Script.SetField(phone, "inspectDuration", 6f);
+
+            CO_EnemyInvestigation_Script phoneInvestigation =
+                scene.SpawnEnemy("Caller", new Vector3(-15f, 0f, 0f)).GetComponent<CO_EnemyInvestigation_Script>();
+            CO_EnemyInvestigation_Script radioInvestigation =
+                scene.SpawnEnemy("Listener", new Vector3(15f, 0f, 0f)).GetComponent<CO_EnemyInvestigation_Script>();
+
+            phone.Interact(player);
+            radio.Interact(player);
+
+            yield return CO_DistractionTestScene_Script.WaitUntil(
+                () => phoneInvestigation.IsInspecting && radioInvestigation.IsInspecting,
+                "both enemies to arrive and start looking around");
+            float inspectStart = Time.time;
+
+            yield return CO_DistractionTestScene_Script.WaitUntil(
+                () => !radio.IsActive, "the radio to be found and switched off");
+            float radioTime = Time.time - inspectStart;
+            Assert.That(phone.IsActive, Is.True, "the phone call is still going when the radio is done");
+
+            yield return CO_DistractionTestScene_Script.WaitUntil(
+                () => !phone.IsActive, "the phone to be answered and hung up");
+            float phoneTime = Time.time - inspectStart;
+
+            // Both arrive in the same few frames, so a frame or two of slack covers the start.
+            Assert.That(radioTime, Is.EqualTo(4f).Within(0.5f), "a radio keeps the guard's own 4 s");
+            Assert.That(phoneTime, Is.EqualTo(6f).Within(0.5f), "the phone keeps them for its 6 s");
+        }
+
+        [UnityTest]
         public IEnumerator OnlyOneEnemyLeavesItsRouteAndTheRestGlanceAndCarryOn()
         {
             CO_DistractionDevice_Script radio = scene.SpawnRadio("Radio", Vector3.zero, noiseRadius: 25f);

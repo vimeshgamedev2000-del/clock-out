@@ -39,6 +39,10 @@ public class CO_DistractionDevice_Script : MonoBehaviour, CO_IHoldInteractable_S
              "an enemy comes and finds it.")]
     [SerializeField] private float playDuration = 0f;
 
+    [Tooltip("Seconds the investigator spends at it once arrived. 0 uses the " +
+             "guard's own inspect time.")]
+    [SerializeField] private float inspectDuration = 0f;
+
     [Header("Feedback")]
     [Tooltip("Optional looping sound played while running.")]
     [SerializeField] private AudioSource audioSource;
@@ -69,6 +73,8 @@ public class CO_DistractionDevice_Script : MonoBehaviour, CO_IHoldInteractable_S
     public bool CanInteract => !IsActive && !spent && Time.time >= readyTime;
 
     public Transform Transform => transform;
+
+    public float InspectDuration => inspectDuration;
 
     private void Awake()
     {
@@ -187,6 +193,7 @@ public class CO_DistractionDevice_Script : MonoBehaviour, CO_IHoldInteractable_S
         pulseInterval = Mathf.Max(pulseInterval, 0.1f);
         holdDuration = Mathf.Max(holdDuration, 0f);
         noiseRadius = Mathf.Max(noiseRadius, 0f);
+        inspectDuration = Mathf.Max(inspectDuration, 0f);
     }
 
     private void OnDrawGizmos()

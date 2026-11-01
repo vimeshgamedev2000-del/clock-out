@@ -33,7 +33,7 @@ public class CO_EnemyInvestigation_Script : MonoBehaviour
     [SerializeField] private float travelTimeout = 15f;
 
     [Header("Inspection")]
-    [Tooltip("Seconds spent looking around on arrival.")]
+    [Tooltip("Seconds spent looking around on arrival, unless the source asks for its own.")]
     [SerializeField] private float inspectDuration = 4f;
 
     [Tooltip("Total width of the look-around sweep in degrees, centred on the noise.")]
@@ -126,7 +126,8 @@ public class CO_EnemyInvestigation_Script : MonoBehaviour
     private void Arrive(Vector3 target)
     {
         phase = Phase.Inspecting;
-        inspectEndTime = Time.time + inspectDuration;
+        float duration = source != null && source.InspectDuration > 0f ? source.InspectDuration : inspectDuration;
+        inspectEndTime = Time.time + duration;
 
         // Centre the sweep on the noise itself. Standing exactly on it leaves no
         // direction to measure, so keep the current facing in that case.

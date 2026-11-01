@@ -11,6 +11,12 @@ public interface CO_INoiseSource_Script
     Transform Transform { get; }
 
     /// <summary>
+    /// Seconds the investigator spends at it before finishing. 0 keeps the
+    /// guard's own inspect time; a desk phone keeps them talking longer.
+    /// </summary>
+    float InspectDuration => 0f;
+
+    /// <summary>
     /// Called once by the enemy that walked over and finished inspecting it.
     /// The source decides what that means: a radio switches itself off.
     /// </summary>
