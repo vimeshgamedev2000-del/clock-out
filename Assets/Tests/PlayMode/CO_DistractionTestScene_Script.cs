@@ -75,6 +75,7 @@ namespace ClockOut.Tests
             enemy.AddComponent<CO_EnemyHearing_Script>();
             enemy.AddComponent<CO_EnemyInvestigation_Script>();
             enemy.AddComponent<CO_EnemyAI_Script>();
+            AddGuardTuning(enemy);
 
             enemy.SetActive(true);
             return enemy;
@@ -104,8 +105,9 @@ namespace ClockOut.Tests
             }
 
             CO_EnemyHearing_Script hearing = listener.AddComponent<CO_EnemyHearing_Script>();
-            SetField(hearing, "alertDuration", alertDuration);
-            SetField(hearing, "standDownDelay", standDownDelay);
+            AddGuardTuning(listener);
+            SetGuardTuning(listener, "alertDuration", alertDuration);
+            SetGuardTuning(listener, "standDownDelay", standDownDelay);
 
             listener.SetActive(true);
             return hearing;
@@ -197,6 +199,52 @@ namespace ClockOut.Tests
             Assert.That(tuningField, Is.Not.Null, "CO_WorkStack_Script has no field 'tuning' - the test needs updating.");
 
             SetField(tuningField.GetValue(stack), fieldName, value);
+        }
+
+        /// <summary>
+        /// Gives every guard component on the object one shared tuning, as a coworker
+        /// prefab's asset does. Made from the field's type, like AddWorkStack. Keeps the
+        /// numbers these tests were written against (6 m sight, 2 s glance, 1–3 s
+        /// pauses) rather than the level's, so moving the tuning changed no test.
+        /// </summary>
+        public static void AddGuardTuning(GameObject guard)
+        {
+            ScriptableObject tuning = null;
+
+            foreach (MonoBehaviour component in guard.GetComponents<MonoBehaviour>())
+            {
+                FieldInfo tuningField = component.GetType().GetField(
+                    "tuning", BindingFlags.Instance | BindingFlags.NonPublic);
+
+                if (tuningField == null || !typeof(ScriptableObject).IsAssignableFrom(tuningField.FieldType))
+                {
+                    continue;
+                }
+
+                if (tuning == null)
+                {
+                    tuning = ScriptableObject.CreateInstance(tuningField.FieldType);
+                }
+
+                tuningField.SetValue(component, tuning);
+            }
+
+            Assert.That(tuning, Is.Not.Null, $"{guard.name} has no guard component with a 'tuning' field - the test needs updating.");
+
+            SetField(tuning, "detectionRadius", 6f);
+            SetField(tuning, "standDownDelay", 2f);
+            SetField(tuning, "maxWaitTime", 3f);
+        }
+
+        /// <summary>Changes one number on a guard's tuning, standing in for the asset's Inspector.</summary>
+        public static void SetGuardTuning(GameObject guard, string fieldName, object value)
+        {
+            CO_EnemyHearing_Script hearing = guard.GetComponent<CO_EnemyHearing_Script>();
+            FieldInfo tuningField = typeof(CO_EnemyHearing_Script).GetField(
+                "tuning", BindingFlags.Instance | BindingFlags.NonPublic);
+            Assert.That(tuningField, Is.Not.Null, "CO_EnemyHearing_Script has no field 'tuning' - the test needs updating.");
+
+            SetField(tuningField.GetValue(hearing), fieldName, value);
         }
 
         /// <summary>A solid cube, for crowding an enemy with colliders.</summary>

@@ -36,8 +36,7 @@ namespace ClockOut.Tests
         private GameObject SpawnInstantEnemy(string name, Vector3 position, float yaw = 0f)
         {
             GameObject enemy = scene.SpawnEnemy(name, position, yaw);
-            CO_DistractionTestScene_Script.SetField(
-                enemy.GetComponent<CO_EnemyDetection_Script>(), "noticeTime", 0f);
+            CO_DistractionTestScene_Script.SetGuardTuning(enemy, "noticeTime", 0f);
             return enemy;
         }
 
@@ -127,9 +126,9 @@ namespace ClockOut.Tests
             // and caught the player would hand over a folder and spoil the count.
             GameObject near = scene.SpawnEnemy("Near", new Vector3(0f, 0f, 0f), 180f);
             GameObject far = scene.SpawnEnemy("Far", new Vector3(2f, 0f, 0f), 180f);
-            CO_DistractionTestScene_Script.SetField(near.GetComponent<CO_EnemyDetection_Script>(), "detectionRadius", 0f);
-            CO_DistractionTestScene_Script.SetField(far.GetComponent<CO_EnemyDetection_Script>(), "detectionRadius", 0f);
-            CO_DistractionTestScene_Script.SetField(far.GetComponent<CO_EnemyHearing_Script>(), "standDownDelay", 0.4f);
+            CO_DistractionTestScene_Script.SetGuardTuning(near, "detectionRadius", 0f);
+            CO_DistractionTestScene_Script.SetGuardTuning(far, "detectionRadius", 0f);
+            CO_DistractionTestScene_Script.SetGuardTuning(far, "standDownDelay", 0.4f);
 
             GameObject player = scene.SpawnPlayer(new Vector3(0f, 0f, 2.5f));
             CO_WorkStack_Script stack = player.GetComponent<CO_WorkStack_Script>();

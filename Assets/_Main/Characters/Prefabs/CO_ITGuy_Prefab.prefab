@@ -189,10 +189,34 @@ PrefabInstance:
       propertyPath: m_Name
       value: CO_ITGuy_Prefab
       objectReference: {fileID: 0}
+    - target: {fileID: 4456873614092981021, guid: 5def39698ec6ef24e919cdb350e2b7ef, type: 3}
+      propertyPath: tuning
+      value: 
+      objectReference: {fileID: 11400000, guid: 893f8049985180140b7fedcc044ae2f8, type: 2}
     - target: {fileID: 4512950212818123221, guid: 5def39698ec6ef24e919cdb350e2b7ef, type: 3}
       propertyPath: targetRenderer
       value: 
       objectReference: {fileID: 9003510475062138152}
+    - target: {fileID: 5829699041764254110, guid: 5def39698ec6ef24e919cdb350e2b7ef, type: 3}
+      propertyPath: tuning
+      value: 
+      objectReference: {fileID: 11400000, guid: 893f8049985180140b7fedcc044ae2f8, type: 2}
+    - target: {fileID: 6049301020107420866, guid: 5def39698ec6ef24e919cdb350e2b7ef, type: 3}
+      propertyPath: tuning
+      value: 
+      objectReference: {fileID: 11400000, guid: 893f8049985180140b7fedcc044ae2f8, type: 2}
+    - target: {fileID: 6540979548638507554, guid: 5def39698ec6ef24e919cdb350e2b7ef, type: 3}
+      propertyPath: tuning
+      value: 
+      objectReference: {fileID: 11400000, guid: 893f8049985180140b7fedcc044ae2f8, type: 2}
+    - target: {fileID: 7426143409195165391, guid: 5def39698ec6ef24e919cdb350e2b7ef, type: 3}
+      propertyPath: tuning
+      value: 
+      objectReference: {fileID: 11400000, guid: 893f8049985180140b7fedcc044ae2f8, type: 2}
+    - target: {fileID: 8220424685341730549, guid: 5def39698ec6ef24e919cdb350e2b7ef, type: 3}
+      propertyPath: tuning
+      value: 
+      objectReference: {fileID: 11400000, guid: 893f8049985180140b7fedcc044ae2f8, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:

@@ -22,13 +22,8 @@ public enum EnemyState
 [RequireComponent(typeof(CO_EnemyInvestigation_Script))]
 public class CO_EnemyAI_Script : MonoBehaviour
 {
-    [Header("Chase")]
-    [Tooltip("Units travelled per second while chasing. Usually above patrol speed.")]
-    [SerializeField] private float chaseSpeed = 3.5f;
-
-    [Header("Catch")]
-    [Tooltip("Seconds after handing over work during which this enemy ignores the player and goes back to its route.")]
-    [SerializeField] private float delegatedCooldown = 8f;
+    [Tooltip("This coworker type's numbers: chase speed and the \"just delegated\" cooldown.")]
+    [SerializeField] private CO_GuardTuning_Script tuning;
 
     private float delegatedUntil = float.NegativeInfinity;
 
@@ -205,7 +200,7 @@ public class CO_EnemyAI_Script : MonoBehaviour
         // Flattened so the enemy drives at the player's feet rather than tilting
         // toward the centre of their collider.
         Vector3 target = movement.FlattenToOwnHeight(detection.DetectedPlayer.position);
-        movement.MoveTowards(target, chaseSpeed);
+        movement.MoveTowards(target, tuning.ChaseSpeed);
     }
 
     private void Attack()
@@ -216,7 +211,7 @@ public class CO_EnemyAI_Script : MonoBehaviour
 
         if (attack.TryAttack(detection.DetectedPlayer))
         {
-            delegatedUntil = Time.time + delegatedCooldown;
+            delegatedUntil = Time.time + tuning.DelegatedCooldown;
         }
     }
 }

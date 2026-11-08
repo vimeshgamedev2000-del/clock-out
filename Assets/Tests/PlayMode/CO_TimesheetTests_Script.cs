@@ -194,7 +194,7 @@ namespace ClockOut.Tests
             GameObject player = scene.SpawnPlayer(new Vector3(0f, 0f, 4f));
             CO_WorkStack_Script stack = player.GetComponent<CO_WorkStack_Script>();
             GameObject enemy = scene.SpawnEnemy("Enemy", Vector3.zero);
-            CO_DistractionTestScene_Script.SetField(enemy.GetComponent<CO_EnemyDetection_Script>(), "noticeTime", 0f);
+            CO_DistractionTestScene_Script.SetGuardTuning(enemy, "noticeTime", 0f);
             CO_EnemyAI_Script ai = enemy.GetComponent<CO_EnemyAI_Script>();
 
             GameObject statsObject = scene.SpawnBlock(new Vector3(30f, 0f, 0f));

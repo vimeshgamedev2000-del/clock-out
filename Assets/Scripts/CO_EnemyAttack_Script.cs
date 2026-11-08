@@ -8,22 +8,8 @@ using UnityEngine;
 /// </summary>
 public class CO_EnemyAttack_Script : MonoBehaviour
 {
-    [Header("Range")]
-    [Tooltip("Distance at which the enemy stops and starts attacking.")]
-    [SerializeField] private float attackRange = 2f;
-
-    [Tooltip("Distance the player must exceed before the enemy resumes chasing. " +
-             "Kept above attack range so the state does not flicker at the boundary.")]
-    [SerializeField] private float attackExitRange = 2.5f;
-
-    [Header("Timing")]
-    [Tooltip("Seconds between attempts to hand over work.")]
-    [SerializeField] private float attackCooldown = 1f;
-
-    [Header("Work")]
-    [Tooltip("Folders this coworker hands over per catch (GDD §6: Boss 3, the rest 1).")]
-    [Min(1)]
-    [SerializeField] private int foldersPerCatch = 1;
+    [Tooltip("This coworker type's numbers: catch ranges, cooldown and folders per catch.")]
+    [SerializeField] private CO_GuardTuning_Script tuning;
 
     private float nextAttackTime;
     private float lastAttackTime = float.NegativeInfinity;
@@ -36,20 +22,10 @@ public class CO_EnemyAttack_Script : MonoBehaviour
     private const float AttackFlashDuration = 0.15f;
 
     /// <summary>Folders handed over per catch.</summary>
-    public int FoldersPerCatch => foldersPerCatch;
+    public int FoldersPerCatch => tuning.FoldersPerCatch;
 
     /// <summary>When this enemy last handed over work, for the catch line. Negative infinity before the first.</summary>
     public float LastHandOffTime { get; private set; } = float.NegativeInfinity;
-
-    private void OnValidate()
-    {
-        // A smaller exit range than attack range would invert the hysteresis and
-        // reintroduce the flicker this is meant to prevent.
-        if (attackExitRange < attackRange)
-        {
-            attackExitRange = attackRange;
-        }
-    }
 
     /// <summary>
     /// True when the player is close enough to start attacking. Uses the tighter
@@ -57,7 +33,7 @@ public class CO_EnemyAttack_Script : MonoBehaviour
     /// </summary>
     public bool IsInAttackRange(Vector3 targetPosition)
     {
-        return FlatDistanceTo(targetPosition) <= attackRange;
+        return FlatDistanceTo(targetPosition) <= tuning.AttackRange;
     }
 
     /// <summary>
@@ -66,7 +42,7 @@ public class CO_EnemyAttack_Script : MonoBehaviour
     /// </summary>
     public bool ShouldStayInAttackRange(Vector3 targetPosition)
     {
-        return FlatDistanceTo(targetPosition) <= attackExitRange;
+        return FlatDistanceTo(targetPosition) <= tuning.AttackExitRange;
     }
 
     /// <summary>
@@ -80,7 +56,7 @@ public class CO_EnemyAttack_Script : MonoBehaviour
             return false;
         }
 
-        nextAttackTime = Time.time + attackCooldown;
+        nextAttackTime = Time.time + tuning.AttackCooldown;
         lastAttackTime = Time.time;
 
         if (stackOwner != target)
@@ -89,7 +65,7 @@ public class CO_EnemyAttack_Script : MonoBehaviour
             targetStack = target.GetComponent<CO_WorkStack_Script>();
         }
 
-        if (targetStack == null || !targetStack.TryHandWork(foldersPerCatch, gameObject))
+        if (targetStack == null || !targetStack.TryHandWork(tuning.FoldersPerCatch, gameObject))
         {
             return false;
         }
@@ -119,13 +95,19 @@ public class CO_EnemyAttack_Script : MonoBehaviour
 
     private void OnDrawGizmosSelected()
     {
+        // The base coworker prefab has no type, so nothing to draw.
+        if (tuning == null)
+        {
+            return;
+        }
+
         // Solid red briefly after each swing, outline otherwise.
         bool flashing = Time.time - lastAttackTime < AttackFlashDuration;
 
         Gizmos.color = flashing ? Color.red : new Color(1f, 0.5f, 0f);
-        Gizmos.DrawWireSphere(transform.position, attackRange);
+        Gizmos.DrawWireSphere(transform.position, tuning.AttackRange);
 
         Gizmos.color = new Color(1f, 0.5f, 0f, 0.35f);
-        Gizmos.DrawWireSphere(transform.position, attackExitRange);
+        Gizmos.DrawWireSphere(transform.position, tuning.AttackExitRange);
     }
 }

@@ -8,12 +8,8 @@ using UnityEngine;
 public class CO_EnemyDetection_Script : MonoBehaviour
 {
     [Header("Detection")]
-    [Tooltip("How far the enemy can notice the player.")]
-    [SerializeField] private float detectionRadius = 6f;
-
-    [Tooltip("Total width of the vision cone in degrees, centred on the enemy's facing.")]
-    [Range(0f, 360f)]
-    [SerializeField] private float viewAngle = 90f;
+    [Tooltip("This coworker type's numbers: cone radius and angle, notice and forget time.")]
+    [SerializeField] private CO_GuardTuning_Script tuning;
 
     [Header("Line of Sight")]
     [Tooltip("Layers that block sight. Walls belong here; the player and the enemy do not.")]
@@ -30,13 +26,6 @@ public class CO_EnemyDetection_Script : MonoBehaviour
 
     [Tooltip("Seconds between scans. Detection does not need to run every frame.")]
     [SerializeField] private float scanInterval = 0.1f;
-
-    [Header("Notice")]
-    [Tooltip("Seconds of unbroken sight to fill the notice meter. 0 notices on first sight.")]
-    [SerializeField] private float noticeTime = 0.6f;
-
-    [Tooltip("Seconds for a full meter to drain back to empty once the player is out of sight.")]
-    [SerializeField] private float forgetTime = 1.5f;
 
     /// <summary>The player while they are inside the vision cone, otherwise null.</summary>
     public Transform DetectedPlayer { get; private set; }
@@ -57,8 +46,8 @@ public class CO_EnemyDetection_Script : MonoBehaviour
     public bool IsIgnoringPlayer { get; private set; }
 
     // Read by the in-game vision cone so it draws exactly the area this script tests.
-    public float DetectionRadius => detectionRadius;
-    public float ViewAngle => viewAngle;
+    public float DetectionRadius => tuning.DetectionRadius;
+    public float ViewAngle => tuning.ViewAngle;
     public LayerMask ObstacleMask => obstacleMask;
     public float EyeHeight => eyeHeight;
 
@@ -99,6 +88,8 @@ public class CO_EnemyDetection_Script : MonoBehaviour
     private void UpdateNoticeMeter()
     {
         bool wasNoticed = NoticeLevel >= 1f;
+        float noticeTime = tuning.NoticeTime;
+        float forgetTime = tuning.ForgetTime;
 
         if (HasDetectedPlayer && !IsIgnoringPlayer)
         {
@@ -142,7 +133,7 @@ public class CO_EnemyDetection_Script : MonoBehaviour
         // Range, then angle, then the raycast: each test is dearer than the one
         // before it, so the common case of a player somewhere else in the level
         // costs a single distance check.
-        if (Vector3.Distance(transform.position, candidate.position) > detectionRadius)
+        if (Vector3.Distance(transform.position, candidate.position) > DetectionRadius)
         {
             return null;
         }
@@ -194,7 +185,7 @@ public class CO_EnemyDetection_Script : MonoBehaviour
         facing.y = 0f;
 
         // viewAngle is the full width of the cone, so each side spans half of it.
-        return Vector3.Angle(facing, toTarget) <= viewAngle * 0.5f;
+        return Vector3.Angle(facing, toTarget) <= ViewAngle * 0.5f;
     }
 
     /// <summary>
@@ -229,6 +220,12 @@ public class CO_EnemyDetection_Script : MonoBehaviour
     // to leave in; the in-game cone visual is a separate concern.
     private void OnDrawGizmos()
     {
+        // The base coworker prefab has no type, so nothing to draw.
+        if (tuning == null)
+        {
+            return;
+        }
+
         // Red once the player is noticed, yellow while the meter fills, cyan while idle.
         Gizmos.color = HasNoticedPlayer ? Color.red : HasDetectedPlayer ? Color.yellow : Color.cyan;
 
@@ -259,6 +256,8 @@ public class CO_EnemyDetection_Script : MonoBehaviour
         }
 
         facing.Normalize();
+        float viewAngle = ViewAngle;
+        float detectionRadius = DetectionRadius;
         float halfAngle = viewAngle * 0.5f;
 
         // The two outer edges of the cone.

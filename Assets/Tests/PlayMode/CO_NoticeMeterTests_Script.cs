@@ -42,8 +42,7 @@ namespace ClockOut.Tests
         private GameObject SpawnEnemyWithNoticeTime(float noticeTime)
         {
             GameObject enemy = scene.SpawnEnemy("Enemy", Vector3.zero);
-            CO_DistractionTestScene_Script.SetField(
-                enemy.GetComponent<CO_EnemyDetection_Script>(), "noticeTime", noticeTime);
+            CO_DistractionTestScene_Script.SetGuardTuning(enemy, "noticeTime", noticeTime);
             return enemy;
         }
 

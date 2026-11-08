@@ -121,8 +121,8 @@ namespace ClockOut.Tests
             GameObject middle = scene.SpawnEnemy("Middle", new Vector3(12f, 0f, 0f));
             GameObject far = scene.SpawnEnemy("Far", new Vector3(18f, 0f, 0f));
 
-            CO_DistractionTestScene_Script.SetField(middle.GetComponent<CO_EnemyHearing_Script>(), "standDownDelay", 0.4f);
-            CO_DistractionTestScene_Script.SetField(far.GetComponent<CO_EnemyHearing_Script>(), "standDownDelay", 0.4f);
+            CO_DistractionTestScene_Script.SetGuardTuning(middle, "standDownDelay", 0.4f);
+            CO_DistractionTestScene_Script.SetGuardTuning(far, "standDownDelay", 0.4f);
 
             radio.Interact(player);
 
@@ -179,7 +179,7 @@ namespace ClockOut.Tests
             CO_DistractionTestScene_Script.SetField(radio, "pulseInterval", 1000f);
 
             GameObject enemy = scene.SpawnEnemy("Enemy", Vector3.zero);
-            CO_DistractionTestScene_Script.SetField(enemy.GetComponent<CO_EnemyInvestigation_Script>(), "travelTimeout", 0.3f);
+            CO_DistractionTestScene_Script.SetGuardTuning(enemy, "travelTimeout", 0.3f);
 
             radio.Interact(player);
 
@@ -201,7 +201,7 @@ namespace ClockOut.Tests
             GameObject near = scene.SpawnEnemy("Near", new Vector3(6f, 0f, 0f));
             GameObject far = scene.SpawnEnemy("Far", new Vector3(18f, 0f, 0f));
 
-            CO_DistractionTestScene_Script.SetField(far.GetComponent<CO_EnemyHearing_Script>(), "standDownDelay", 0.4f);
+            CO_DistractionTestScene_Script.SetGuardTuning(far, "standDownDelay", 0.4f);
 
             radio.Interact(player);
 
@@ -319,7 +319,7 @@ namespace ClockOut.Tests
 
             GameObject near = scene.SpawnEnemy("Near", Vector3.zero);
             GameObject far = scene.SpawnEnemy("Far", new Vector3(4f, 0f, 0f));
-            CO_DistractionTestScene_Script.SetField(far.GetComponent<CO_EnemyHearing_Script>(), "standDownDelay", 0.4f);
+            CO_DistractionTestScene_Script.SetGuardTuning(far, "standDownDelay", 0.4f);
 
             // What the interactor calls once E has been held for HoldDuration.
             shredder.Interact(player);

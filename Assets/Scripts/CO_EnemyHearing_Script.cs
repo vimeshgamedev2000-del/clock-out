@@ -11,17 +11,12 @@ using UnityEngine;
 /// </summary>
 public class CO_EnemyHearing_Script : MonoBehaviour
 {
+    // The glance at a sound another enemy was sent to is standDownDelay; after it
+    // that sound is ignored while it keeps going, so a radio left playing costs
+    // one glance. alertDuration is for a sound nobody could be sent to at all.
     [Header("Reaction")]
-    [Tooltip("Seconds an enemy looks toward a sound another enemy has already " +
-             "been sent to check, before carrying on with its route. It then " +
-             "ignores that sound for as long as it keeps going, so a radio left " +
-             "playing costs it one glance and nothing more.")]
-    [SerializeField] private float standDownDelay = 2f;
-
-    [Tooltip("Seconds an enemy stands and faces a sound that nobody was sent to " +
-             "investigate at all. Only reached when every enemy in earshot is " +
-             "busy chasing the player.")]
-    [SerializeField] private float alertDuration = 2.5f;
+    [Tooltip("This coworker type's numbers: the glance (stand-down) and alert times.")]
+    [SerializeField] private CO_GuardTuning_Script tuning;
 
     /// <summary>
     /// How long a dismissed sound stays dismissed once it has gone quiet. The
@@ -146,7 +141,7 @@ public class CO_EnemyHearing_Script : MonoBehaviour
 
         // Refreshed on every pulse, so a guard left alert beside a radio nobody
         // could be sent to does not drift back to patrolling underneath it.
-        alertExpiryTime = Time.time + alertDuration;
+        alertExpiryTime = Time.time + tuning.AlertDuration;
 
         if (isNew || promoted)
         {
@@ -177,7 +172,7 @@ public class CO_EnemyHearing_Script : MonoBehaviour
             return;
         }
 
-        float deadline = Time.time + standDownDelay;
+        float deadline = Time.time + tuning.StandDownDelay;
 
         if (!HasNoise)
         {

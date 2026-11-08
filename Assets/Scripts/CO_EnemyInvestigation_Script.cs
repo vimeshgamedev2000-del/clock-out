@@ -6,7 +6,7 @@ using UnityEngine;
 /// and ticks it, the same way it drives CO_EnemyPatrol_Script.
 ///
 /// The inspection is where the distraction pays off - the enemy is stood still,
-/// facing away from wherever it came from, for as long as inspectDuration lasts.
+/// facing away from wherever it came from, for as long as the inspection lasts.
 /// </summary>
 [RequireComponent(typeof(CO_EnemyPatrol_Script))]
 public class CO_EnemyInvestigation_Script : MonoBehaviour
@@ -19,26 +19,15 @@ public class CO_EnemyInvestigation_Script : MonoBehaviour
         Finished
     }
 
-    [Header("Approach")]
-    [Tooltip("Units travelled per second on the way to the noise. Between patrol " +
-             "and chase speed reads as curious rather than alarmed.")]
-    [SerializeField] private float investigateSpeed = 2.8f;
+    [Tooltip("This coworker type's numbers: walk speed, timeout, inspect time and sweep.")]
+    [SerializeField] private CO_GuardTuning_Script tuning;
 
+    [Header("Approach")]
     [Tooltip("How close to the noise counts as having reached it. Keep above the " +
              "agent's radius, or the enemy pushes into the object it came to look at.")]
     [SerializeField] private float arriveDistance = 1.5f;
 
-    [Tooltip("Seconds before an unreachable noise is written off, measured from " +
-             "setting out. Stops a guard walking at a wall forever.")]
-    [SerializeField] private float travelTimeout = 15f;
-
     [Header("Inspection")]
-    [Tooltip("Seconds spent looking around on arrival, unless the source asks for its own.")]
-    [SerializeField] private float inspectDuration = 4f;
-
-    [Tooltip("Total width of the look-around sweep in degrees, centred on the noise.")]
-    [SerializeField] private float sweepAngle = 100f;
-
     [Tooltip("Seconds for one full sweep across and back.")]
     [SerializeField] private float sweepPeriod = 2.5f;
 
@@ -71,7 +60,8 @@ public class CO_EnemyInvestigation_Script : MonoBehaviour
     {
         source = noiseSource;
         phase = Phase.Travelling;
-        travelDeadline = Time.time + travelTimeout;
+        // Measured from setting out, so a guard never walks at a wall forever.
+        travelDeadline = Time.time + tuning.TravelTimeout;
     }
 
     /// <summary>
@@ -120,13 +110,13 @@ public class CO_EnemyInvestigation_Script : MonoBehaviour
             return;
         }
 
-        movement.MoveTowards(target, investigateSpeed);
+        movement.MoveTowards(target, tuning.InvestigateSpeed);
     }
 
     private void Arrive(Vector3 target)
     {
         phase = Phase.Inspecting;
-        float duration = source != null && source.InspectDuration > 0f ? source.InspectDuration : inspectDuration;
+        float duration = source != null && source.InspectDuration > 0f ? source.InspectDuration : tuning.InspectDuration;
         inspectEndTime = Time.time + duration;
 
         // Centre the sweep on the noise itself. Standing exactly on it leaves no
@@ -158,7 +148,7 @@ public class CO_EnemyInvestigation_Script : MonoBehaviour
     private Vector3 SweepLookPoint()
     {
         float phaseAngle = sweepPeriod > 0f ? Time.time * Mathf.PI * 2f / sweepPeriod : 0f;
-        float offset = Mathf.Sin(phaseAngle) * sweepAngle * 0.5f;
+        float offset = Mathf.Sin(phaseAngle) * tuning.SweepAngle * 0.5f;
 
         Vector3 direction = Quaternion.Euler(0f, offset, 0f) * sweepCentre;
         return transform.position + direction;

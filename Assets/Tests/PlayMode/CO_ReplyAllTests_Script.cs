@@ -98,7 +98,7 @@ namespace ClockOut.Tests
 
             GameObject near = scene.SpawnEnemy("Near", Vector3.zero);
             GameObject far = scene.SpawnEnemy("Far", new Vector3(8f, 0f, 0f));
-            CO_DistractionTestScene_Script.SetField(far.GetComponent<CO_EnemyHearing_Script>(), "standDownDelay", 0.4f);
+            CO_DistractionTestScene_Script.SetGuardTuning(far, "standDownDelay", 0.4f);
             yield return null;
 
             // What the interactor calls on the E press.

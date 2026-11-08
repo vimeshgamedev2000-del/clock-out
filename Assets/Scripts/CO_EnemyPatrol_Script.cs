@@ -19,28 +19,18 @@ public class CO_EnemyPatrol_Script : MonoBehaviour
     [SerializeField] private Transform[] waypoints;
 
     [Header("Movement")]
-    [Tooltip("Units travelled per second while patrolling.")]
-    [SerializeField] private float patrolSpeed = 2f;
-
-    [Tooltip("Degrees turned per second when facing a new direction.")]
-    [SerializeField] private float turnSpeed = 720f;
+    [Tooltip("This coworker type's numbers: patrol speed, turn speed and waypoint pauses.")]
+    [SerializeField] private CO_GuardTuning_Script tuning;
 
     [Tooltip("How close counts as having reached a waypoint.")]
     [SerializeField] private float arriveDistance = 0.15f;
-
-    [Header("Waypoint Pause")]
-    [Tooltip("Shortest pause at a waypoint, in seconds.")]
-    [SerializeField] private float minWaitTime = 1f;
-
-    [Tooltip("Longest pause at a waypoint, in seconds. Every stop rolls a new time between the two.")]
-    [SerializeField] private float maxWaitTime = 3f;
 
     private int currentIndex;
     private float waitTimer;
     private NavMeshAgent agent;
 
     /// <summary>Speed used when following the patrol route.</summary>
-    public float PatrolSpeed => patrolSpeed;
+    public float PatrolSpeed => tuning.PatrolSpeed;
 
     /// <summary>True when the route has enough valid points to follow.</summary>
     public bool HasRoute => waypoints != null && waypoints.Length >= 2;
@@ -113,7 +103,7 @@ public class CO_EnemyPatrol_Script : MonoBehaviour
         {
             // Rolled per stop rather than once per enemy, so guards sharing a route
             // drift apart instead of marching in step.
-            waitTimer = Random.Range(minWaitTime, maxWaitTime);
+            waitTimer = Random.Range(tuning.MinWaitTime, tuning.MaxWaitTime);
 
             // With the range left at zero there is no pause to expire, so step on
             // here instead. Otherwise the enemy would park on the waypoint.
@@ -171,7 +161,7 @@ public class CO_EnemyPatrol_Script : MonoBehaviour
         {
             Quaternion facing = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.RotateTowards(
-                transform.rotation, facing, turnSpeed * Time.deltaTime);
+                transform.rotation, facing, tuning.TurnSpeed * Time.deltaTime);
         }
     }
 
@@ -197,7 +187,7 @@ public class CO_EnemyPatrol_Script : MonoBehaviour
 
         Quaternion facing = Quaternion.LookRotation(direction);
         transform.rotation = Quaternion.RotateTowards(
-            transform.rotation, facing, turnSpeed * Time.deltaTime);
+            transform.rotation, facing, tuning.TurnSpeed * Time.deltaTime);
     }
 
     /// <summary>
@@ -207,14 +197,6 @@ public class CO_EnemyPatrol_Script : MonoBehaviour
     public Vector3 FlattenToOwnHeight(Vector3 position)
     {
         return new Vector3(position.x, transform.position.y, position.z);
-    }
-
-    private void OnValidate()
-    {
-        // Keeps the Inspector range sane: a negative or inverted range would feed
-        // Random.Range values that never produce a pause.
-        minWaitTime = Mathf.Max(minWaitTime, 0f);
-        maxWaitTime = Mathf.Max(maxWaitTime, minWaitTime);
     }
 
     private void OnDrawGizmosSelected()

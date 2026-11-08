@@ -52,10 +52,34 @@ PrefabInstance:
       propertyPath: m_Name
       value: CO_ChattyCoworker_Prefab
       objectReference: {fileID: 0}
+    - target: {fileID: 4456873614092981021, guid: 5def39698ec6ef24e919cdb350e2b7ef, type: 3}
+      propertyPath: tuning
+      value: 
+      objectReference: {fileID: 11400000, guid: 339f976035db55f4eabaa1dd5cc1e1c7, type: 2}
     - target: {fileID: 4512950212818123221, guid: 5def39698ec6ef24e919cdb350e2b7ef, type: 3}
       propertyPath: targetRenderer
       value: 
       objectReference: {fileID: 2187311542430331071}
+    - target: {fileID: 5829699041764254110, guid: 5def39698ec6ef24e919cdb350e2b7ef, type: 3}
+      propertyPath: tuning
+      value: 
+      objectReference: {fileID: 11400000, guid: 339f976035db55f4eabaa1dd5cc1e1c7, type: 2}
+    - target: {fileID: 6049301020107420866, guid: 5def39698ec6ef24e919cdb350e2b7ef, type: 3}
+      propertyPath: tuning
+      value: 
+      objectReference: {fileID: 11400000, guid: 339f976035db55f4eabaa1dd5cc1e1c7, type: 2}
+    - target: {fileID: 6540979548638507554, guid: 5def39698ec6ef24e919cdb350e2b7ef, type: 3}
+      propertyPath: tuning
+      value: 
+      objectReference: {fileID: 11400000, guid: 339f976035db55f4eabaa1dd5cc1e1c7, type: 2}
+    - target: {fileID: 7426143409195165391, guid: 5def39698ec6ef24e919cdb350e2b7ef, type: 3}
+      propertyPath: tuning
+      value: 
+      objectReference: {fileID: 11400000, guid: 339f976035db55f4eabaa1dd5cc1e1c7, type: 2}
+    - target: {fileID: 8220424685341730549, guid: 5def39698ec6ef24e919cdb350e2b7ef, type: 3}
+      propertyPath: tuning
+      value: 
+      objectReference: {fileID: 11400000, guid: 339f976035db55f4eabaa1dd5cc1e1c7, type: 2}
     - target: {fileID: 8220424685341730549, guid: 5def39698ec6ef24e919cdb350e2b7ef, type: 3}
       propertyPath: noticeTime
       value: 0.8
